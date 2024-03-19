@@ -33,10 +33,10 @@ for sys_id in EVEMAP.hs_systems:
       break
     origins = horizon
 
-print('Jita:',nearest_cdp[EVEMAP.name_to_id('Jita')]) # Expect Jita 0
-print('Bei:',nearest_cdp[EVEMAP.name_to_id('Bei')]) # Expect Hek 1
-print('Eust:',nearest_cdp[EVEMAP.name_to_id('Eust')]) # Expect Hek 3
-print('Amarr:',nearest_cdp[EVEMAP.name_to_id('Amarr')]) # Expect None 999
+#print('Jita:',nearest_cdp[EVEMAP.name_to_id('Jita')]) # Expect Jita 0
+#print('Bei:',nearest_cdp[EVEMAP.name_to_id('Bei')]) # Expect Hek 1
+#print('Eust:',nearest_cdp[EVEMAP.name_to_id('Eust')]) # Expect Hek 3
+#print('Amarr:',nearest_cdp[EVEMAP.name_to_id('Amarr')]) # Expect None 999
 
 sys_names = sorted([EVEMAP.id_to_name(_) for _ in EVEMAP.hs_systems])
 for sys_name in sys_names:
