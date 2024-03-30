@@ -80,11 +80,11 @@ jita_cdp = EVEMAP.bfs(['Jita'], 4)
 stac_cdp = EVEMAP.bfs(['Stacmon'], 4)
 amarr_cdp = []#EVEMAP.bfs(['Amarr'], 2)
 dodixie_cdp = EVEMAP.bfs(['Dodixie'], 1)
-rens_cdp = EVEMAP.bfs(['Rens'], 1)
-hek_cdp = EVEMAP.bfs(['Hek'], 1)
+rens_cdp = []#EVEMAP.bfs(['Rens'], 1)
+hek_cdp = []#EVEMAP.bfs(['Hek'], 1)
 
 SPECIAL_CASES = {
-  'Uedama': None,
+  'Uedama': None, # REMOVE
   'Jita': 'Jita 04,M04,Caldari Navy Assembly Plant',
   'Stacmon': ',,The Quad',
   'Hek': 'Hek 08,M12,Boundless Creation Factory',
