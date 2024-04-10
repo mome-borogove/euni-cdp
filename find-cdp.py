@@ -26,7 +26,7 @@ for sys_id in EVEMAP.hs_systems:
     continue
   origins = [sys_id]
   for j in range(1,max_jumps+1):
-    horizon = EVEMAP._bfs(origins,1)
+    horizon = EVEMAP._bfs(origins, jumps=1)
     near = cdpset & horizon
     if len(near)>0:
       nearest_cdp[sys_id] = ([_ for _ in near],j)

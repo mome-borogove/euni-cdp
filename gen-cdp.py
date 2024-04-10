@@ -76,26 +76,58 @@ smap = {k:sorted_station_string(v,) for k,v in stationmap.items()}
 
 ################################################################################
 # Adjust the policy here:
-jita_cdp = EVEMAP.bfs(['Jita'], 4)
-stac_cdp = EVEMAP.bfs(['Stacmon'], 4)
-amarr_cdp = []#EVEMAP.bfs(['Amarr'], 2)
-dodixie_cdp = EVEMAP.bfs(['Dodixie'], 1)
-rens_cdp = []#EVEMAP.bfs(['Rens'], 1)
-hek_cdp = []#EVEMAP.bfs(['Hek'], 1)
+avoids = ['Juunigaishi'] # These are not just invalid CDPs, but also systems invalid to route through for jumps
+
+jita_cdp = EVEMAP.bfs(['Jita'], avoids, 4)
+stac_cdp = EVEMAP.bfs(['Stacmon'], avoids, 4)
+amarr_cdp = []#EVEMAP.bfs(['Amarr'], avoids, 2)
+dodixie_cdp = EVEMAP.bfs(['Dodixie'], avoids, 0)
+rens_cdp = []#EVEMAP.bfs(['Rens'], avoids, 1)
+hek_cdp = []#EVEMAP.bfs(['Hek'], avoids, 1)
+averon_cdp = EVEMAP.bfs(['Averon'], avoids, 0)
 
 SPECIAL_CASES = {
-  'Uedama': None, # REMOVE
-  'Jita': 'Jita 04,M04,Caldari Navy Assembly Plant',
-  'Stacmon': ',,The Quad',
-  'Hek': 'Hek 08,M12,Boundless Creation Factory',
-  'Rens': 'Rens 06,M08,Brutor Tribe Treasury',
-  'Dodixie': 'Dodixie 09,M20,Federation Navy Assembly Plant',
+  'Uedama': None, # Unsafe
+  'Sivala': None, # Unsafe
+  'Isanamo': None, # Unsafe
+  'Haatomo': None, # Unsafe
+  'Saatuban': None, # Unsafe
+  'Jita': 'Jita 04,M04,Caldari Navy Assembly Plant', # Trade Hub
+  'Stacmon': ',,The Quad', # Uni Structure
+  'Hek': 'Hek 08,M12,Boundless Creation Factory', # Trade Hub
+  'Rens': 'Rens 06,M08,Brutor Tribe Treasury', # Trade Hub
+  'Dodixie': 'Dodixie 09,M20,Federation Navy Assembly Plant', # Trade Hub
+  'Perimeter': ',,Scrapyard', # Uni Structure
+  'Korama': 'Korama 02,M07,Perkone Warhouse', # Collision problems with top station
+  'Vellaine': 'Vellaine 05,M04,Echelon Entertainment Development Studio', # Collision problems with top station
+  'Paara': 'Paara 02,,Sukuuvestaa Corporation Warehouse', # Collision problems with top station
+  #'Liekuri': ? Possible collision problems
+  'Averon': ',,The Rock', # Uni Structure
+  'Manarq': ',,IChooseYou Market and Industry', # Upwell Structure
 }
+SPECIAL_CASES.update({_:None for _ in avoids})
 ################################################################################
 
-route = ['Jita','Perimeter','Urlen','Kusomonmon','Suroken','Haatomo','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
+#route = ['Jita','Perimeter','Urlen','Kusomonmon','Suroken','Haatomo','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
+route1 = ['Jita','Perimeter','Urlen','Sirppala','Inaro','Waskisen','Ikao','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
+route2 = ['Jita','Sobaseki','Veisto','Sarekuwa','Halaima','Kamio','Ikao','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
 
-cdp = set(EVEMAP.bfs(route,0)) | set(stac_cdp) | set(jita_cdp) | set(amarr_cdp) | set(dodixie_cdp) | set(rens_cdp) | set(hek_cdp)
+dodi_route = ['Stacmon','Aidart','Cistuvaert','Alentene','Alenia','Tourier','Yulai','Ourapheh','Botane','Dodixie']
+aver_route = ['Stacmon','Aidart','Cistuvaert','Alentene','Merolles','Tar','Manarq','Tolle','Carirgnottin','Averon']
+
+cdp = (
+  set(EVEMAP.bfs(route1,avoids,0))
+| set(EVEMAP.bfs(route2,avoids,0))
+| set(EVEMAP.bfs(dodi_route,avoids,0))
+| set(EVEMAP.bfs(aver_route,avoids,0))
+| set(stac_cdp)
+| set(jita_cdp)
+| set(amarr_cdp)
+| set(dodixie_cdp)
+| set(rens_cdp)
+| set(hek_cdp)
+| set(averon_cdp)
+)
 
 
 # Filter systems with stations. If you don't want them, remove the else: block.
@@ -110,7 +142,9 @@ for c in cdp:
   elif len(top_station)>0:
     cdp_stations.append( (c, top_station) )
   else:
-    cdp_stations.append( (c, [',,PushX Mailbox']) )
+    pass # Omit the system -- PushX and iChooseYou are now handled via special cases
+  #else:
+  #  cdp_stations.append( (c, [',,PushX Mailbox']) )
 
 
 [print(f'{x},{y[0]}') for x,y in sorted(cdp_stations,key=itemgetter(0))]

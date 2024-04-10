@@ -40,10 +40,11 @@ class Evemap(object):
   def adj(self, sys_id):
     return self._jumpmap[sys_id]
 
-  def bfs(self, origins, jumps=1):
-    return [self.id_to_name(n) for n in self._bfs([self.name_to_id(i) for i in origins], jumps)]
+  def bfs(self, origins, avoids=[], jumps=1):
+    return [self.id_to_name(n) for n in self._bfs([self.name_to_id(i) for i in origins], [self.name_to_id(v) for v in avoids], jumps)]
 
-  def _bfs(self, origin_ids, jumps=1):
+  def _bfs(self, origin_ids, avoid_ids=[], jumps=1):
+    avoids = set(avoid_ids)
     # High-sec-only breadth-first search
     visited = set(origin_ids)
     horizon0 = [_ for _ in visited]
@@ -51,7 +52,7 @@ class Evemap(object):
       horizon1 = set([])
       for v0 in horizon0:
         v1 = set([_ for _ in self.adj(v0) if self.is_hs(_)])
-        horizon1 |= v1 - visited
+        horizon1 |= v1 - visited - avoids
       visited |= horizon1
       horizon0 = horizon1
     return visited # n.b.- this is a set
