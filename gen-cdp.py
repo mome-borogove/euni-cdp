@@ -79,55 +79,69 @@ smap = {k:sorted_station_string(v,) for k,v in stationmap.items()}
 avoids = ['Juunigaishi'] # These are not just invalid CDPs, but also systems invalid to route through for jumps
 
 jita_cdp = EVEMAP.bfs(['Jita'], avoids, 4)
-stac_cdp = EVEMAP.bfs(['Stacmon'], avoids, 4)
-amarr_cdp = []#EVEMAP.bfs(['Amarr'], avoids, 2)
-dodixie_cdp = EVEMAP.bfs(['Dodixie'], avoids, 0)
-rens_cdp = []#EVEMAP.bfs(['Rens'], avoids, 1)
-hek_cdp = []#EVEMAP.bfs(['Hek'], avoids, 1)
-averon_cdp = EVEMAP.bfs(['Averon'], avoids, 0)
+#stac_cdp = EVEMAP.bfs(['Stacmon'], avoids, 4)
+#amarr_cdp = EVEMAP.bfs(['Amarr'], avoids, 2)
+#dodixie_cdp = EVEMAP.bfs(['Dodixie'], avoids, 0)
+#rens_cdp = EVEMAP.bfs(['Rens'], avoids, 1)
+#hek_cdp = EVEMAP.bfs(['Hek'], avoids, 1)
+#averon_cdp = EVEMAP.bfs(['Averon'], avoids, 0)
 
+# Certain systems/structures are bad for undock. This allows exceptions from the "top station" rule.
+# This is less important for 3rd-party hauling, but the functionality exists nonetheless.
+# If you want to remove a system entirely, use None.
+# Exceptions in this list do *NOT* mean they are included as a CDP, only that
+# if they are, the replacement is used (or it is removed, if None)
 SPECIAL_CASES = {
   'Uedama': None, # Unsafe
   'Sivala': None, # Unsafe
   'Isanamo': None, # Unsafe
   'Haatomo': None, # Unsafe
   'Saatuban': None, # Unsafe
+
   'Jita': 'Jita 04,M04,Caldari Navy Assembly Plant', # Trade Hub
   'Stacmon': ',,The Quad', # Uni Structure
   'Hek': 'Hek 08,M12,Boundless Creation Factory', # Trade Hub
   'Rens': 'Rens 06,M08,Brutor Tribe Treasury', # Trade Hub
   'Dodixie': 'Dodixie 09,M20,Federation Navy Assembly Plant', # Trade Hub
-  'Perimeter': ',,Scrapyard', # Uni Structure
+
+  'Alenia': 'Alenia 05,M05,Republic Security Services Assembly Plant',
+  'Averon': 'Averon 07,M03,The Rock', # Uni Structure
+  'Direrie': 'Direrie 05,M17,Federal Freight Storage',
   'Korama': 'Korama 02,M07,Perkone Warhouse', # Collision problems with top station
-  'Vellaine': 'Vellaine 05,M04,Echelon Entertainment Development Studio', # Collision problems with top station
-  'Paara': 'Paara 02,,Sukuuvestaa Corporation Warehouse', # Collision problems with top station
-  #'Liekuri': ? Possible collision problems
-  'Averon': ',,The Rock', # Uni Structure
   'Manarq': ',,IChooseYou Market and Industry', # Upwell Structure
+  'Paara': 'Paara 02,,Sukuuvestaa Corporation Warehouse', # Collision problems with top station
+  'Perimeter': ',,Scrapyard', # Uni Structure
+  'Sotrentaira': 'Sotrentaira 07,M03,Genolution Biotech Production',
+  'Vellaine': 'Vellaine 05,M04,Echelon Entertainment Development Studio', # Collision problems with top station
+  #'Liekuri': ? Possible collision problems
 }
 SPECIAL_CASES.update({_:None for _ in avoids})
 ################################################################################
 
+korsiki_route = ['Jita','New Caldari','Josameto','Liekuri','Obanen','Olo','Osmon','Korsiki']
 #route = ['Jita','Perimeter','Urlen','Kusomonmon','Suroken','Haatomo','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
-route1 = ['Jita','Perimeter','Urlen','Sirppala','Inaro','Waskisen','Ikao','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
-route2 = ['Jita','Sobaseki','Veisto','Sarekuwa','Halaima','Kamio','Ikao','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
+#route1 = ['Jita','Perimeter','Urlen','Sirppala','Inaro','Waskisen','Ikao','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
+#route2 = ['Jita','Sobaseki','Veisto','Sarekuwa','Halaima','Kamio','Ikao','Uedama','Sivala','Hatakani','Kassigainen','Synchelle','Pakhshi','Tar','Merolles','Alentene','Cistuvaert','Stacmon','Aidart','Stacmon']
 
-dodi_route = ['Stacmon','Aidart','Cistuvaert','Alentene','Alenia','Tourier','Yulai','Ourapheh','Botane','Dodixie']
-aver_route = ['Stacmon','Aidart','Cistuvaert','Alentene','Merolles','Tar','Manarq','Tolle','Carirgnottin','Averon']
+#dodi_route = ['Stacmon','Aidart','Cistuvaert','Alentene','Alenia','Tourier','Yulai','Ourapheh','Botane','Dodixie']
+#aver_route = ['Stacmon','Aidart','Cistuvaert','Alentene','Merolles','Tar','Manarq','Tolle','Carirgnottin','Averon']
 
 cdp = (
-  set(EVEMAP.bfs(route1,avoids,0))
-| set(EVEMAP.bfs(route2,avoids,0))
-| set(EVEMAP.bfs(dodi_route,avoids,0))
-| set(EVEMAP.bfs(aver_route,avoids,0))
-| set(stac_cdp)
-| set(jita_cdp)
-| set(amarr_cdp)
-| set(dodixie_cdp)
-| set(rens_cdp)
-| set(hek_cdp)
-| set(averon_cdp)
+  set(jita_cdp)
+| set(EVEMAP.bfs(korsiki_route,avoids,0))
 )
+#  set(EVEMAP.bfs(route1,avoids,0))
+#| set(EVEMAP.bfs(route2,avoids,0))
+#| set(EVEMAP.bfs(dodi_route,avoids,0))
+#| set(EVEMAP.bfs(aver_route,avoids,0))
+#| set(stac_cdp)
+#| set(jita_cdp)
+#| set(amarr_cdp)
+#| set(dodixie_cdp)
+#| set(rens_cdp)
+#| set(hek_cdp)
+#| set(averon_cdp)
+#)
 
 
 # Filter systems with stations. If you don't want them, remove the else: block.
